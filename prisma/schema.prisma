@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum EventCategory {
+  LECTURE
+  WORKSHOP
+  SPORT
+  MUSIC
+  CINEMA
+  EXHIBITION
+  WALK
+  MEETUP
+  PERFORMANCE
+  OTHER
+}
+
+enum EventStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum RegistrationStatus {
+  ACTIVE
+  CANCELLED
+}
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+}
+
+enum TransactionType {
+  TOPUP
+  EVENT_FEE
+  PROMOTION
+  SUBSCRIPTION
+  REFUND
+}
+
+model User {
+  id                String         @id @default(cuid())
+  email             String         @unique
+  passwordHash      String
+  name              String?
+  city              String?        @default("Самара")
+  avatarEmoji       String         @default("😀")
+  avatarImage       Bytes?
+  avatarMime        String?
+  role              Role           @default(USER)
+  balanceKopecks    Int            @default(0)
+  subscriptionUntil DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  events            Event[]        @relation("EventAuthor")
+  registrations     Registration[]
+  reviews           Review[]
+  reports           Report[]
+  resolvedReports   Report[]       @relation("ReportResolver")
+  transactions      Transaction[]
+
+  @@index([email])
+}
+
+model Event {
+  id              String          @id @default(cuid())
+  authorId        String
+  author          User            @relation("EventAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  title           String
+  description     String          @db.Text
+  category        EventCategory
+  startsAt        DateTime
+  endsAt          DateTime?
+  address         String
+  lat             Float
+  lng             Float
+  priceKopecks    Int             @default(0)
+  capacity        Int?
+  status          EventStatus     @default(PENDING)
+  rejectionReason String?
+  promotedUntil   DateTime?
+  city            String          @default("Самара")
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  registrations   Registration[]
+  reviews         Review[]
+  reports         Report[]
+
+  @@index([status, startsAt])
+  @@index([authorId])
+  @@index([city, status, startsAt])
+  @@index([promotedUntil])
+}
+
+model Registration {
+  id               String             @id @default(cuid())
+  userId           String
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId          String
+  event            Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  status           RegistrationStatus @default(ACTIVE)
+  priceKopecksPaid Int                @default(0)
+  createdAt        DateTime           @default(now())
+
+  @@unique([userId, eventId])
+  @@index([eventId, status])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating    Int
+  text      String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+}
+
+model Report {
+  id           String       @id @default(cuid())
+  eventId      String
+  event        Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reason       String       @db.Text
+  status       ReportStatus @default(OPEN)
+  resolvedById String?
+  resolvedBy   User?        @relation("ReportResolver", fields: [resolvedById], references: [id])
+  resolvedAt   DateTime?
+  createdAt    DateTime     @default(now())
+
+  @@index([status])
+  @@index([eventId])
+}
+
+model Transaction {
+  id           String          @id @default(cuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deltaKopecks Int
+  type         TransactionType
+  meta         Json?
+  createdAt    DateTime        @default(now())
+
+  @@index([userId, createdAt])
+}

@@ -1,0 +1,190 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@theme {
+  /* === Raw palette "Samara Dvorik" (use ONLY via semantic tokens below) === */
+  --color-milk:           #FAF6F0;
+  --color-milk-elevated:  #FFFFFF;
+  --color-paper:          #F2EDE5;
+  --color-coal:           #1E1B18;
+  --color-coal-elevated:  #28241F;
+  --color-coal-soft:      #322D27;
+  --color-summer:         #E89B4A;
+  --color-summer-soft:    #F4C690;
+  --color-volga:          #4A7C8F;
+  --color-olive:          #5C6B3A;
+  --color-rust:           #A85A36;
+  --color-ash:            #6F6862;
+  --color-ash-soft:       #B7AFA7;
+  --color-ash-line:       #E7E0D6;
+  --color-ash-line-dark:  #3A352F;
+
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-body:    "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-card:  12px;
+  --radius-input: 8px;
+  --radius-pill:  999px;
+
+  --tb-transition: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* shadcn compatibility: map semantic tokens to Tailwind color namespace */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+}
+
+:root {
+  --background:        var(--color-milk);
+  --foreground:        var(--color-coal);
+  --card:              var(--color-milk-elevated);
+  --card-foreground:   var(--color-coal);
+  --popover:           var(--color-milk-elevated);
+  --popover-foreground: var(--color-coal);
+  --primary:           var(--color-coal);
+  --primary-foreground: var(--color-milk);
+  --secondary:         var(--color-paper);
+  --secondary-foreground: var(--color-coal);
+  --muted:             var(--color-paper);
+  --muted-foreground:  var(--color-ash);
+  --accent:            var(--color-summer-soft);
+  --accent-foreground: var(--color-coal);
+  --destructive:       var(--color-rust);
+  --destructive-foreground: #FFFFFF;
+  --border:            var(--color-ash-line);
+  --input:             var(--color-ash-line);
+  --ring:              var(--color-summer);
+}
+
+.dark {
+  --background:        var(--color-coal);
+  --foreground:        var(--color-milk);
+  --card:              var(--color-coal-elevated);
+  --card-foreground:   var(--color-milk);
+  --popover:           var(--color-coal-elevated);
+  --popover-foreground: var(--color-milk);
+  --primary:           var(--color-milk);
+  --primary-foreground: var(--color-coal);
+  --secondary:         var(--color-coal-soft);
+  --secondary-foreground: var(--color-milk);
+  --muted:             var(--color-coal-soft);
+  --muted-foreground:  var(--color-ash-soft);
+  --accent:            color-mix(in oklab, var(--color-summer) 18%, transparent);
+  --accent-foreground: var(--color-milk);
+  --destructive:       var(--color-rust);
+  --destructive-foreground: #FFFFFF;
+  --border:            var(--color-ash-line-dark);
+  --input:             var(--color-ash-line-dark);
+  --ring:              var(--color-summer);
+}
+
+html, body { font-family: var(--font-body); }
+h1, h2, h3, h4, h5, h6, .font-display { font-family: var(--font-display); }
+.font-mono, code, pre, .tabular {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+}
+
+.tb-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  transition: border-color var(--tb-transition), box-shadow var(--tb-transition);
+}
+.tb-card:hover {
+  border-color: color-mix(in oklab, var(--foreground) 28%, var(--border));
+  box-shadow: 0 4px 14px rgba(30, 27, 24, 0.05);
+}
+.tb-card[data-selected="true"] {
+  border-color: var(--color-volga);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-volga) 35%, transparent);
+}
+
+.promoted-card {
+  background: var(--color-summer-soft);
+  border-color: var(--color-summer);
+}
+.dark .promoted-card {
+  background: color-mix(in oklab, var(--color-summer) 14%, transparent);
+  border-color: var(--color-summer);
+}
+
+.date-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 56px;
+  padding: 6px 8px;
+  background: var(--color-coal);
+  color: var(--color-milk);
+  border-radius: var(--radius-input);
+  font-family: var(--font-display);
+  line-height: 1;
+}
+.date-block .day   { font-size: 22px; font-weight: 700; font-feature-settings: 'tnum' 1; }
+.date-block .month { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.85; margin-top: 2px; }
+.dark .date-block  { background: var(--color-milk); color: var(--color-coal); }
+
+.tb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.tb-badge-summer { background: var(--color-summer-soft); color: var(--color-coal); }
+.tb-badge-volga  { background: color-mix(in oklab, var(--color-volga) 18%, transparent); color: var(--color-volga); }
+.dark .tb-badge-volga { color: color-mix(in oklab, var(--color-volga) 88%, white); }
+.tb-badge-olive  { background: color-mix(in oklab, var(--color-olive) 18%, transparent); color: var(--color-olive); }
+.dark .tb-badge-olive { color: color-mix(in oklab, var(--color-olive) 80%, white); }
+.tb-badge-coal   { background: var(--color-coal); color: var(--color-milk); }
+.dark .tb-badge-coal { background: var(--color-milk); color: var(--color-coal); }
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-input);
+}
+
+* { scrollbar-color: var(--color-ash-line) transparent; scrollbar-width: thin; }
+.dark * { scrollbar-color: var(--color-ash-line-dark) transparent; }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
